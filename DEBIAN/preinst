@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+# Check if running in Proxmox
+if [ ! -d /etc/pve ]; then
+    echo "This script must be run in a Proxmox environment."
+    exit 1
+fi
+
+echo "Running pre-installation tasks..."

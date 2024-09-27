@@ -1,0 +1,8 @@
+Package: cluster-trimmer
+Version: 1.2
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: Easton Manning easton@aurorasky.io
+Depends: python3, python3-pip, python3-requests, python3-paramiko, sqlite3
+Description: This script automatically manages the file system trimming of your containers on your ProxMox cluster. It will automatically retrieve the connection information for all nodes in your cluster, connect to each node, perform a trim on all containers on that node, and then proceed to the next node. It's as simple as adjusting a couple settings such as how often you want the trimmer to run and you are set, no more having to manually trim your container file systems. This is extremely helpful when you have larger numbers of containers or are using a storage system such as CEPH. If you are not familiar with what file system trimming is trimming is the process of identifying and marking free Inodes, or space, that are no longer being used by the container but are still using space.

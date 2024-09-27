@@ -1,0 +1,71 @@
+#!/bin/sh
+set -e
+
+echo "Running post-installation tasks..."
+
+# Ensure Python 3 and pip are installed
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "Python 3 is not installed. Please install it manually."
+    exit 1
+fi
+
+if ! command -v pip3 >/dev/null 2>&1; then
+    echo "pip for Python 3 is not installed. Please install it manually."
+    exit 1
+fi
+
+# Install necessary Python packages
+pip3 install requests paramiko
+
+# Check for SQLite
+if ! command -v sqlite3 >/dev/null 2>&1; then
+    echo "SQLite3 is not installed. Please install it manually."
+    exit 1
+fi
+
+# Define the database path
+DB_DIR="/etc/cluster-trimmer"
+DB_FILE="$DB_DIR/trimmer_data.db"
+
+# Create the directory if it doesn't exist
+mkdir -p "$DB_DIR"
+
+# Ensure the correct permissions
+chown root:root "$DB_DIR"
+chmod 755 "$DB_DIR"
+
+# Create the SQLite database and tables
+sqlite3 "$DB_FILE" <<EOF
+CREATE TABLE IF NOT EXISTS trim_data (
+    container_id INTEGER,
+    pre_trim_size TEXT,
+    post_trim_size TEXT,
+    trim_date TEXT,
+    reclaimed_space TEXT,
+    reclaimed_percentage REAL,
+    errors TEXT
+);
+
+CREATE TABLE IF NOT EXISTS log_entries (
+    timestamp TEXT,
+    message TEXT
+);
+EOF
+
+# Install and enable the systemd service
+SERVICE_FILE="/etc/systemd/system/cluster-trimmer.service"
+
+# Copy the service file
+cp /etc/cluster-trimmer/cluster-trimmer.service "$SERVICE_FILE"
+
+# Reload systemd to recognize the new service
+systemctl daemon-reload
+
+# Enable the service to start on boot
+systemctl enable cluster-trimmer.service
+
+# Make sure the service has started
+systemctl start cluster-trimmer.service
+
+echo "Service installed and enabled."
+echo "Installation complete. Please ensure your script is configured properly for Proxmox."

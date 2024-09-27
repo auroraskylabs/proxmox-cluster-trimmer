@@ -1,0 +1,10 @@
+[Unit]
+Description=Cluster Trimmer Service
+After=network.target
+
+[Service]
+ExecStart=/etc/cluster-trimmer/cluster_trimmer_service.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
