@@ -142,7 +142,7 @@ def trim_container(ssh_client, container_id, all_containers):
         if not all_containers:
             time_threshold = datetime.now() - timedelta(hours=24)
             if was_trimmed_recently(container_id, time_threshold):
-                log(f"Skipping trim for container {container_id}, last trimmed within the last 24 hours.")
+                log(f"Skipping trim for container {container_id}, last trimmed within the defined time threshold.")
                 return
         
         log(f"Starting trim on container {container_id}")
